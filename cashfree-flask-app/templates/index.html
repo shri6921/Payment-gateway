@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cashfree Payment</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>Cashfree UPI Payment</h1>
+    <form id="paymentForm">
+        <input type="text" name="name" placeholder="Your Name" required><br>
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="number" name="amount" placeholder="Amount" required><br>
+        <button type="submit">Pay Now</button>
+    </form>
+
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('paymentForm').onsubmit = async (e) => {
+            e.preventDefault();
+
+            const name = e.target.name.value;
+            const email = e.target.email.value;
+            const amount = e.target.amount.value;
+
+            const res = await fetch('/create_payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, amount })
+            });
+
+            const result = await res.json();
+            console.log(result);
+
+            if (result.payment_link) {
+                window.open(result.payment_link, '_blank');
+            } else {
+                document.getElementById('response').innerText = "Payment Failed!";
+            }
+        };
+    </script>
+</body>
+</html>
